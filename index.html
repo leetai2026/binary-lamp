@@ -136,8 +136,8 @@ function setLang(lang){
   // トップ説明（常時表示）
   document.getElementById("desc").textContent =
     lang === "jp"
-      ? "バイナリの光からシジルを紡ぐ あなたの内なるパターンをたどる"
-      : "Build your sigil from binary light You are invited to explore your inner pattern";
+      ? "バイナリがあなたを表現する、かも。"
+      : "Binary might describe you… maybe.";
 
   // プレースホルダー・ボタン
   const input = document.getElementById("numberInput");
@@ -177,7 +177,7 @@ function generateMessage(num){
   }
 
   if (currentLang === "jp") {
-    return "あなたは " + words.join(" ") + " 存在 内なる力が形を成す";
+    return "あなたに " + words.join(" ") + " の力が湧き出る";
   } else {
     return "You are " + words.join(" ") + " being Power crystallizes from within";
   }
