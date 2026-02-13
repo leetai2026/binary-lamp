@@ -4,136 +4,187 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Binary Sigil</title>
+
 <style>
-  body {
-    background: #fff;
-    color: #000;
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin-top: 60px;
-  }
-  h1 {
-    font-weight: 600;
-    letter-spacing: 1px;
-  }
-  .toggle {
-    margin-bottom: 30px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(4, 50px);
-    gap: 12px;
-    justify-content: center;
-    margin: 30px 0;
-  }
-  .cell {
-    font-size: 36px;
-    opacity: 0.15;
-    transition: 0.2s ease;
-  }
-  .on {
-    opacity: 1;
-  }
-  input {
-    padding: 8px;
-    font-size: 16px;
-    width: 100px;
-    text-align: center;
-    border: 1px solid #000;
-  }
-  button {
-    padding: 8px 14px;
-    margin-left: 8px;
-    border: 1px solid #000;
-    background: #000;
-    color: #fff;
-    cursor: pointer;
-  }
-  .fortune {
-    margin-top: 25px;
-    font-size: 14px;
-    max-width: 300px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+body{
+  font-family: Arial, sans-serif;
+  text-align:center;
+  background:#f2f2f2;
+  padding:40px;
+}
+
+h1{
+  font-size:48px;
+  letter-spacing:4px;
+}
+
+.lang{
+  margin:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+input{
+  padding:10px;
+  font-size:20px;
+  width:200px;
+  text-align:center;
+}
+
+button{
+  padding:10px 20px;
+  font-size:18px;
+  background:black;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+.grid{
+  margin:40px auto;
+  width:220px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+}
+
+.bulb{
+  font-size:30px;
+  opacity:0.2;
+}
+
+.on{
+  opacity:1;
+}
+
+#result{
+  margin-top:40px;
+  font-size:18px;
+  max-width:500px;
+  margin-left:auto;
+  margin-right:auto;
+}
 </style>
 </head>
+
 <body>
 
-<h1>Binary Sigil</h1>
-<div class="toggle" onclick="toggleLang()">[ EN | JP ]</div>
+<h1 id="title">Binary Sigil</h1>
 
-<input id="input" maxlength="4" placeholder="4 digits">
-<button onclick="render()">Light</button>
+<div>
+<span class="lang" onclick="setLang('en')">EN</span> |
+<span class="lang" onclick="setLang('jp')">JP</span>
+</div>
+
+<br>
+
+<input type="number" id="numberInput" placeholder="Enter number">
+<button id="lightButton">Light</button>
 
 <div class="grid" id="grid"></div>
-<div class="fortune" id="fortune"></div>
+
+<div id="result"></div>
 
 <script>
-let lang = "en";
+let currentLang = "en";
 
-const messages = {
-  active: {
-    en: "Core energy type. Power builds from within.",
-    ja: "内側から力を蓄えるコア型。"
-  },
-  stable: {
-    en: "Stable anchor type. Grounded and steady.",
-    ja: "安定アンカー型。落ち着いた堅実タイプ。"
+/* ---------- 電球生成 ---------- */
+const grid = document.getElementById("grid");
+for(let i=0;i<16;i++){
+  const span=document.createElement("div");
+  span.className="bulb";
+  span.textContent="💡";
+  grid.appendChild(span);
+}
+
+/* ---------- 言語切替 ---------- */
+function setLang(lang){
+  currentLang = lang;
+  document.getElementById("title").textContent =
+    lang==="jp" ? "バイナリー・シジル" : "Binary Sigil";
+}
+
+/* ---------- シジル文章生成 ---------- */
+function generateSigilMessage(number, lang="en"){
+
+  const traitsEN=[
+    ["Inner","Outer"],
+    ["Creative","Logical"],
+    ["Calm","Dynamic"],
+    ["Light-bound","Shadow-born"],
+    ["Destructive","Constructive"],
+    ["Fluid","Stable"],
+    ["Silent","Expressive"],
+    ["Visionary","Grounded"],
+    ["Magnetic","Radiant"],
+    ["Hidden","Revealed"],
+    ["Ancient","Future-bound"],
+    ["Chaotic","Ordered"],
+    ["Instinctive","Strategic"],
+    ["Wild","Refined"],
+    ["Independent","Connected"],
+    ["Evolving","Constant"]
+  ];
+
+  const traitsJP=[
+    ["内なる","外向の"],
+    ["創造的な","論理的な"],
+    ["静かな","躍動する"],
+    ["光に導かれた","影を宿す"],
+    ["破壊的な","構築的な"],
+    ["流動する","安定した"],
+    ["沈黙の","表現する"],
+    ["幻想的な","現実的な"],
+    ["引き寄せる","放射する"],
+    ["秘められた","顕在化した"],
+    ["古代の","未来志向の"],
+    ["混沌の","秩序の"],
+    ["本能的な","戦略的な"],
+    ["野生の","洗練された"],
+    ["自立した","繋がりを持つ"],
+    ["進化する","不変の"]
+  ];
+
+  const traits = lang==="jp" ? traitsJP : traitsEN;
+
+  let binary = number.toString(2).padStart(16,"0");
+  let words=[];
+
+  for(let i=0;i<16;i++){
+    let bit=binary[i];
+    words.push(bit==="1"?traits[i][1]:traits[i][0]);
   }
-};
 
-let currentType = null;
-
-function updateFortune() {
-  if (!currentType) return;
-  document.getElementById("fortune").textContent =
-    messages[currentType][lang];
-}
-  
-function toggleLang() {
-  lang = lang === "en" ? "ja" : "en";
-  document.documentElement.lang = lang;
-  updateFortune();
-}
-
-function toBinary4(n) {
-  return n.toString(2).padStart(4, '0');
-}
-
-function render() {
-  const value = document.getElementById("input").value;
-  if (!/^\d{4}$/.test(value)) return;
-
-  const grid = document.getElementById("grid");
-  const fortune = document.getElementById("fortune");
-  grid.innerHTML = "";
-
-  let bits = "";
-  for (let digit of value) {
-    bits += toBinary4(parseInt(digit));
+  if(lang==="jp"){
+    return words.slice(0,4).join("・")+"存在。内なる力が形を成す。";
+  }else{
+    return words.slice(0,4).join(", ")+" being. Power crystallizes from within.";
   }
+}
 
-  let ones = 0;
+/* ---------- ボタン処理 ---------- */
+document.getElementById("lightButton").addEventListener("click",function(){
 
-  for (let bit of bits) {
-    const cell = document.createElement("div");
-    cell.classList.add("cell");
-    cell.textContent = "💡";
-    if (bit === "1") {
-      cell.classList.add("on");
-      ones++;
+  const input=document.getElementById("numberInput");
+  const num=parseInt(input.value);
+
+  if(isNaN(num)) return;
+
+  let binary=num.toString(2).padStart(16,"0");
+
+  const bulbs=document.querySelectorAll(".bulb");
+  bulbs.forEach((b,i)=>{
+    if(binary[i]==="1"){
+      b.classList.add("on");
+    }else{
+      b.classList.remove("on");
     }
-    grid.appendChild(cell);
-  }
+  });
 
-  currentType = ones >= 8 ? "active" : "stable";
-updateFortune();
-
+  const message=generateSigilMessage(num,currentLang);
+  document.getElementById("result").textContent=message;
+});
 </script>
 
 </body>
 </html>
-
