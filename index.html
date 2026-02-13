@@ -14,11 +14,20 @@ body{
 
 h1{
   font-size:48px;
+  margin-bottom:8px;
 }
 
 .lang{
   cursor:pointer;
   font-weight:bold;
+}
+
+#desc{
+  margin:12px auto 24px;
+  color:#333;
+  font-size:16px;
+  line-height:1.6;
+  max-width:640px;
 }
 
 input{
@@ -37,8 +46,14 @@ button{
   cursor:pointer;
 }
 
+.hint{
+  margin-top:8px;
+  font-size:14px;
+  color:#555;
+}
+
 .grid{
-  margin:40px auto;
+  margin:30px auto 40px;
   width:240px;
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -61,7 +76,7 @@ button{
 }
 
 #result{
-  margin-top:40px;
+  margin-top:10px;
   font-size:18px;
   max-width:500px;
   margin-left:auto;
@@ -74,17 +89,25 @@ button{
 
 <h1 id="title">Binary Sigil</h1>
 
-<div id="guide"></div>
-  
+<!-- トップページで常時表示する説明 -->
+<p id="desc">
+  Build your sigil from binary light You are invited to explore your inner pattern
+</p>
+
 <div>
   <span class="lang" onclick="setLang('en')">EN</span> |
   <span class="lang" onclick="setLang('jp')">JP</span>
 </div>
-  
+
 <br>
 
-<input type="number" id="numberInput" placeholder="Enter number">
-<button onclick="activate()">Light</button>
+<!-- 入力とボタン -->
+<div>
+  <input type="number" id="numberInput" placeholder="Enter number">
+  <button id="lightBtn" onclick="activate()">Light</button>
+  <!-- 入力欄直下にヒント（4桁の数字をいれてね） -->
+  <div id="hint" class="hint">Enter any 4 digit number</div>
+</div>
 
 <div class="grid" id="grid"></div>
 
@@ -97,7 +120,7 @@ let currentLang = "en";
 /* 電球生成 */
 const grid = document.getElementById("grid");
 for (let i = 0; i < 16; i++) {
-  let div = document.createElement("div");
+  const div = document.createElement("div");
   div.className = "bulb";
   grid.appendChild(div);
 }
@@ -106,23 +129,29 @@ for (let i = 0; i < 16; i++) {
 function setLang(lang){
   currentLang = lang;
 
+  // タイトル
   document.getElementById("title").textContent =
     lang === "jp" ? "バイナリー・シジル" : "Binary Sigil";
 
-  document.getElementById("guide").innerHTML =
+  // トップ説明（常時表示）
+  document.getElementById("desc").textContent =
     lang === "jp"
-      ? "🇯🇵 日本語<br>好きな4桁の数字を入力してね<br>あなたの内なるシジルが現れるわよ"
-      : "🇺🇸 English<br>Enter any 4-digit number<br>Your inner sigil will awaken";
+      ? "バイナリの光からシジルを紡ぐ あなたの内なるパターンをたどる"
+      : "Build your sigil from binary light You are invited to explore your inner pattern";
 
-  // プレースホルダーとボタン表示も合わせる
+  // プレースホルダー・ボタン
   const input = document.getElementById("numberInput");
   input.placeholder = lang === "jp" ? "数字を入力" : "Enter number";
-  document.querySelector("button").textContent = lang === "jp" ? "点灯" : "Light";
+  document.getElementById("lightBtn").textContent = lang === "jp" ? "点灯" : "Light";
+
+  // 入力欄のヒント（4桁）
+  document.getElementById("hint").textContent =
+    lang === "jp" ? "好きな4桁の数字をいれてね" : "Enter any 4 digit number";
 
   activate(); // 再描画
 }
 
-/* シジル文章生成 */
+/* シジル文章生成（句読点なし・冒頭に You are / あなたは） */
 function generateMessage(num){
   const enTraits = [
     ["Inner","Outer"],
@@ -141,17 +170,15 @@ function generateMessage(num){
   const traits = currentLang === "jp" ? jpTraits : enTraits;
 
   // 上位4ビットで性質を選ぶ
-  let bin4 = num.toString(2).padStart(4,"0");
-  let words = [];
+  const bin4 = num.toString(2).padStart(4,"0");
+  const words = [];
   for (let i = 0; i < 4; i++) {
     words.push(bin4[i] === "1" ? traits[i][1] : traits[i][0]);
   }
 
   if (currentLang === "jp") {
-    // 日本語: 句読点・中黒なし、先頭「あなたは」
     return "あなたは " + words.join(" ") + " 存在 内なる力が形を成す";
   } else {
-    // 英語: 句読点なし、先頭「You are」、区切りはスペース
     return "You are " + words.join(" ") + " being Power crystallizes from within";
   }
 }
@@ -164,7 +191,7 @@ function activate(){
   if (isNaN(num)) return;
 
   // 16ビットで電球表示
-  let bin16 = num.toString(2).padStart(16,"0");
+  const bin16 = num.toString(2).padStart(16,"0");
   const bulbs = document.querySelectorAll(".bulb");
 
   bulbs.forEach((b,i) => {
@@ -184,4 +211,3 @@ setLang(currentLang);
 
 </body>
 </html>
-
