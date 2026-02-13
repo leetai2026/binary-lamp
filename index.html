@@ -1,25 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Binary Sigil</title>
 
 <style>
 body{
-  font-family: Arial, sans-serif;
   text-align:center;
-  background:#f2f2f2;
+  font-family:sans-serif;
+  background:#f4f4f4;
   padding:40px;
 }
 
 h1{
   font-size:48px;
-  letter-spacing:4px;
 }
 
 .lang{
-  margin:10px;
   cursor:pointer;
   font-weight:bold;
 }
@@ -42,19 +39,25 @@ button{
 
 .grid{
   margin:40px auto;
-  width:220px;
+  width:240px;
   display:grid;
   grid-template-columns:repeat(4,1fr);
-  gap:15px;
+  gap:20px;
 }
 
+/* 電球 */
 .bulb{
-  font-size:30px;
-  opacity:0.2;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:#ddd;
+  margin:auto;
+  transition:0.3s;
 }
 
-.on{
-  opacity:1;
+.bulb.on{
+  background:gold;
+  box-shadow:0 0 20px gold;
 }
 
 #result{
@@ -79,112 +82,90 @@ button{
 <br>
 
 <input type="number" id="numberInput" placeholder="Enter number">
-<button id="lightButton">Light</button>
+<button onclick="activate()">Light</button>
 
 <div class="grid" id="grid"></div>
 
 <div id="result"></div>
 
 <script>
-let currentLang = "en";
+let currentLang="en";
 
-/* ---------- 電球生成 ---------- */
-const grid = document.getElementById("grid");
+/* 電球生成 */
+const grid=document.getElementById("grid");
 for(let i=0;i<16;i++){
-  const span=document.createElement("div");
-  span.className="bulb";
-  span.textContent="💡";
-  grid.appendChild(span);
+  let div=document.createElement("div");
+  div.className="bulb";
+  grid.appendChild(div);
 }
 
-/* ---------- 言語切替 ---------- */
+/* 言語切替 */
 function setLang(lang){
-  currentLang = lang;
-  document.getElementById("title").textContent =
-    lang==="jp" ? "バイナリー・シジル" : "Binary Sigil";
+  currentLang=lang;
+
+  document.getElementById("title").textContent=
+    lang==="jp"?"バイナリー・シジル":"Binary Sigil";
+
+  activate(); // 再描画
 }
 
-/* ---------- シジル文章生成 ---------- */
-function generateSigilMessage(number, lang="en"){
+/* シジル文章生成 */
+function generateMessage(num){
 
-  const traitsEN=[
+  const enTraits=[
     ["Inner","Outer"],
     ["Creative","Logical"],
     ["Calm","Dynamic"],
-    ["Light-bound","Shadow-born"],
-    ["Destructive","Constructive"],
-    ["Fluid","Stable"],
-    ["Silent","Expressive"],
-    ["Visionary","Grounded"],
-    ["Magnetic","Radiant"],
-    ["Hidden","Revealed"],
-    ["Ancient","Future-bound"],
-    ["Chaotic","Ordered"],
-    ["Instinctive","Strategic"],
-    ["Wild","Refined"],
-    ["Independent","Connected"],
-    ["Evolving","Constant"]
+    ["Light-bound","Shadow-born"]
   ];
 
-  const traitsJP=[
+  const jpTraits=[
     ["内なる","外向の"],
     ["創造的な","論理的な"],
     ["静かな","躍動する"],
-    ["光に導かれた","影を宿す"],
-    ["破壊的な","構築的な"],
-    ["流動する","安定した"],
-    ["沈黙の","表現する"],
-    ["幻想的な","現実的な"],
-    ["引き寄せる","放射する"],
-    ["秘められた","顕在化した"],
-    ["古代の","未来志向の"],
-    ["混沌の","秩序の"],
-    ["本能的な","戦略的な"],
-    ["野生の","洗練された"],
-    ["自立した","繋がりを持つ"],
-    ["進化する","不変の"]
+    ["光に導かれた","影を宿す"]
   ];
 
-  const traits = lang==="jp" ? traitsJP : traitsEN;
+  const traits=currentLang==="jp"?jpTraits:enTraits;
 
-  let binary = number.toString(2).padStart(16,"0");
+  let bin=num.toString(2).padStart(4,"0");
   let words=[];
 
-  for(let i=0;i<16;i++){
-    let bit=binary[i];
-    words.push(bit==="1"?traits[i][1]:traits[i][0]);
+  for(let i=0;i<4;i++){
+    words.push(bin[i]==="1"?traits[i][1]:traits[i][0]);
   }
 
-  if(lang==="jp"){
-    return words.slice(0,4).join("・")+"存在。内なる力が形を成す。";
+  if(currentLang==="jp"){
+    return words.join("・")+"存在。内なる力が形を成す。";
   }else{
-    return words.slice(0,4).join(", ")+" being. Power crystallizes from within.";
+    return words.join(", ")+" being. Power crystallizes from within.";
   }
 }
 
-/* ---------- ボタン処理 ---------- */
-document.getElementById("lightButton").addEventListener("click",function(){
+/* 実行 */
+function activate(){
 
   const input=document.getElementById("numberInput");
   const num=parseInt(input.value);
 
   if(isNaN(num)) return;
 
-  let binary=num.toString(2).padStart(16,"0");
-
+  let bin=num.toString(2).padStart(16,"0");
   const bulbs=document.querySelectorAll(".bulb");
+
   bulbs.forEach((b,i)=>{
-    if(binary[i]==="1"){
+    if(bin[i]==="1"){
       b.classList.add("on");
     }else{
       b.classList.remove("on");
     }
   });
 
-  const message=generateSigilMessage(num,currentLang);
-  document.getElementById("result").textContent=message;
-});
+  document.getElementById("result").textContent=
+    generateMessage(num);
+}
 </script>
 
 </body>
 </html>
+
