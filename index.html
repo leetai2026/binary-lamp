@@ -1,1 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Binary Sigil</title>
+<style>
+  body {
+    background: #fff;
+    color: #000;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin-top: 60px;
+  }
+  h1 {
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+  .toggle {
+    margin-bottom: 30px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 50px);
+    gap: 12px;
+    justify-content: center;
+    margin: 30px 0;
+  }
+  .cell {
+    font-size: 36px;
+    opacity: 0.15;
+    transition: 0.2s ease;
+  }
+  .on {
+    opacity: 1;
+  }
+  input {
+    padding: 8px;
+    font-size: 16px;
+    width: 100px;
+    text-align: center;
+    border: 1px solid #000;
+  }
+  button {
+    padding: 8px 14px;
+    margin-left: 8px;
+    border: 1px solid #000;
+    background: #000;
+    color: #fff;
+    cursor: pointer;
+  }
+  .fortune {
+    margin-top: 25px;
+    font-size: 14px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>
+</head>
+<body>
+
+<h1>Binary Sigil</h1>
+<div class="toggle" onclick="toggleLang()">[ EN | JP ]</div>
+
+<input id="input" maxlength="4" placeholder="4 digits">
+<button onclick="render()">Light</button>
+
+<div class="grid" id="grid"></div>
+<div class="fortune" id="fortune"></div>
+
+<script>
+let lang = "en";
+
+const messages = {
+  active: {
+    en: "Core energy type. Power builds from within.",
+    ja: "内側から力を蓄えるコア型。"
+  },
+  stable: {
+    en: "Stable anchor type. Grounded and steady.",
+    ja: "安定アンカー型。落ち着いた堅実タイプ。"
+  }
+};
+
+function toggleLang() {
+  lang = lang === "en" ? "ja" : "en";
+  document.documentElement.lang = lang;
+}
+
+function toBinary4(n) {
+  return n.toString(2).padStart(4, '0');
+}
+
+function render() {
+  const value = document.getElementById("input").value;
+  if (!/^\d{4}$/.test(value)) return;
+
+  const grid = document.getElementById("grid");
+  const fortune = document.getElementById("fortune");
+  grid.innerHTML = "";
+
+  let bits = "";
+  for (let digit of value) {
+    bits += toBinary4(parseInt(digit));
+  }
+
+  let ones = 0;
+
+  for (let bit of bits) {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.textContent = "💡";
+    if (bit === "1") {
+      cell.classList.add("on");
+      ones++;
+    }
+    grid.appendChild(cell);
+  }
+
+  const type = ones >= 8 ? "active" : "stable";
+  fortune.textContent = messages[type][lang];
+}
+</script>
+
+</body>
+</html>
 
