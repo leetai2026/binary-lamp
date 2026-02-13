@@ -77,8 +77,8 @@ button{
 <div id="guide"></div>
   
 <div>
-<span class="lang" onclick="setLang('en')">EN</span> |
-<span class="lang" onclick="setLang('jp')">JP</span>
+  <span class="lang" onclick="setLang('en')">EN</span> |
+  <span class="lang" onclick="setLang('jp')">JP</span>
 </div>
   
 <br>
@@ -91,87 +91,95 @@ button{
 <div id="result"></div>
 
 <script>
-let currentLang="en";
+// ▼ デフォルト言語: en
+let currentLang = "en";
 
 /* 電球生成 */
-const grid=document.getElementById("grid");
-for(let i=0;i<16;i++){
-  let div=document.createElement("div");
-  div.className="bulb";
+const grid = document.getElementById("grid");
+for (let i = 0; i < 16; i++) {
+  let div = document.createElement("div");
+  div.className = "bulb";
   grid.appendChild(div);
 }
 
 /* 言語切替 */
-
 function setLang(lang){
   currentLang = lang;
 
   document.getElementById("title").textContent =
-    lang==="jp"?"バイナリー・シジル":"Binary Sigil";
+    lang === "jp" ? "バイナリー・シジル" : "Binary Sigil";
 
   document.getElementById("guide").innerHTML =
-    lang==="jp"
+    lang === "jp"
       ? "🇯🇵 日本語<br>好きな4桁の数字を入力してね<br>あなたの内なるシジルが現れるわよ"
       : "🇺🇸 English<br>Enter any 4-digit number<br>Your inner sigil will awaken";
+
+  // プレースホルダーとボタン表示も合わせる
+  const input = document.getElementById("numberInput");
+  input.placeholder = lang === "jp" ? "数字を入力" : "Enter number";
+  document.querySelector("button").textContent = lang === "jp" ? "点灯" : "Light";
 
   activate(); // 再描画
 }
 
 /* シジル文章生成 */
 function generateMessage(num){
-
-  const enTraits=[
+  const enTraits = [
     ["Inner","Outer"],
     ["Creative","Logical"],
     ["Calm","Dynamic"],
     ["Light-bound","Shadow-born"]
   ];
 
-  const jpTraits=[
+  const jpTraits = [
     ["内なる","外向の"],
     ["創造的な","論理的な"],
     ["静かな","躍動する"],
     ["光に導かれた","影を宿す"]
   ];
 
-  const traits=currentLang==="jp"?jpTraits:enTraits;
+  const traits = currentLang === "jp" ? jpTraits : enTraits;
 
-  let bin=num.toString(2).padStart(4,"0");
-  let words=[];
-
-  for(let i=0;i<4;i++){
-    words.push(bin[i]==="1"?traits[i][1]:traits[i][0]);
+  // 上位4ビットで性質を選ぶ
+  let bin4 = num.toString(2).padStart(4,"0");
+  let words = [];
+  for (let i = 0; i < 4; i++) {
+    words.push(bin4[i] === "1" ? traits[i][1] : traits[i][0]);
   }
 
-  if(currentLang==="jp"){
-    return words.join("・")+"存在。内なる力が形を成す。";
-  }else{
-    return words.join(", ")+" being. Power crystallizes from within.";
+  if (currentLang === "jp") {
+    // 日本語: 句読点・中黒なし、先頭「あなたは」
+    return "あなたは " + words.join(" ") + " 存在 内なる力が形を成す";
+  } else {
+    // 英語: 句読点なし、先頭「You are」、区切りはスペース
+    return "You are " + words.join(" ") + " being Power crystallizes from within";
   }
 }
 
 /* 実行 */
 function activate(){
+  const input = document.getElementById("numberInput");
+  const num = parseInt(input.value);
 
-  const input=document.getElementById("numberInput");
-  const num=parseInt(input.value);
+  if (isNaN(num)) return;
 
-  if(isNaN(num)) return;
+  // 16ビットで電球表示
+  let bin16 = num.toString(2).padStart(16,"0");
+  const bulbs = document.querySelectorAll(".bulb");
 
-  let bin=num.toString(2).padStart(16,"0");
-  const bulbs=document.querySelectorAll(".bulb");
-
-  bulbs.forEach((b,i)=>{
-    if(bin[i]==="1"){
+  bulbs.forEach((b,i) => {
+    if (bin16[i] === "1") {
       b.classList.add("on");
-    }else{
+    } else {
       b.classList.remove("on");
     }
   });
 
-  document.getElementById("result").textContent=
-    generateMessage(num);
+  document.getElementById("result").textContent = generateMessage(num);
 }
+
+// 初期表示（デフォルト: en）
+setLang(currentLang);
 </script>
 
 </body>
