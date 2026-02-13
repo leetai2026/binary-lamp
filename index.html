@@ -131,12 +131,12 @@ function setLang(lang){
 
   // タイトル
   document.getElementById("title").textContent =
-    lang === "jp" ? "バイナリー・シジル" : "Binary Sigil";
+    lang === "jp" ? "二進光図" : "Binary Sigil";
 
   // トップ説明（常時表示）
   document.getElementById("desc").textContent =
     lang === "jp"
-      ? "バイナリがあなたを表現する、かも。"
+      ? "バイナリの光があなたを表現する、かも。"
       : "Binary might describe you… maybe.";
 
   // プレースホルダー・ボタン
@@ -154,17 +154,17 @@ function setLang(lang){
 /* シジル文章生成（句読点なし・冒頭に You are / あなたは） */
 function generateMessage(num){
   const enTraits = [
-    ["Inner","Outer"],
-    ["Creative","Logical"],
-    ["Calm","Dynamic"],
-    ["Light-bound","Shadow-born"]
+  ["Deep Focus", "Light Release"],
+  ["Creative Spark", "Sharp Judgment"],
+  ["Calm Alignment", "Strong Momentum"],
+  ["Choice of Light", "Embrace of Shadow"]
   ];
 
   const jpTraits = [
-    ["内なる","外向の"],
-    ["創造的な","論理的な"],
-    ["静かな","躍動する"],
-    ["光に導かれた","影を宿す"]
+  ["深く集中する", "しなやかに開放する"],
+  ["発想が弾む", "判断が冴える"],
+  ["穏やかに整える", "力強く進める"],
+  ["光を選ぶ", "陰も味わう"]
   ];
 
   const traits = currentLang === "jp" ? jpTraits : enTraits;
@@ -177,9 +177,9 @@ function generateMessage(num){
   }
 
   if (currentLang === "jp") {
-    return "あなたに " + words.join(" ") + " の力が湧き出る";
+    return "あなたには " + words.join(" ") + " 力がある";
   } else {
-    return "You are " + words.join(" ") + " being Power crystallizes from within";
+    return "You have the power of " + words.join(" ") ;
   }
 }
 
