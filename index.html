@@ -85,9 +85,18 @@ const messages = {
   }
 };
 
+let currentType = null;
+
+function updateFortune() {
+  if (!currentType) return;
+  document.getElementById("fortune").textContent =
+    messages[currentType][lang];
+}
+  
 function toggleLang() {
   lang = lang === "en" ? "ja" : "en";
   document.documentElement.lang = lang;
+  updateFortune();
 }
 
 function toBinary4(n) {
@@ -120,9 +129,9 @@ function render() {
     grid.appendChild(cell);
   }
 
-  const type = ones >= 8 ? "active" : "stable";
-  fortune.textContent = messages[type][lang];
-}
+  currentType = ones >= 8 ? "active" : "stable";
+updateFortune();
+
 </script>
 
 </body>
