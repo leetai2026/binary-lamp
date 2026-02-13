@@ -79,6 +79,8 @@ button{
 <span class="lang" onclick="setLang('jp')">JP</span>
 </div>
 
+<div id="guide"></div>
+  
 <br>
 
 <input type="number" id="numberInput" placeholder="Enter number">
@@ -100,11 +102,17 @@ for(let i=0;i<16;i++){
 }
 
 /* 言語切替 */
-function setLang(lang){
-  currentLang=lang;
 
-  document.getElementById("title").textContent=
+function setLang(lang){
+  currentLang = lang;
+
+  document.getElementById("title").textContent =
     lang==="jp"?"バイナリー・シジル":"Binary Sigil";
+
+  document.getElementById("guide").innerHTML =
+    lang==="jp"
+      ? "🇯🇵 日本語<br>好きな4桁の数字を入力してね<br>あなたの内なるシジルが現れるわよ"
+      : "🇺🇸 English<br>Enter any 4-digit number<br>Your inner sigil will awaken";
 
   activate(); // 再描画
 }
